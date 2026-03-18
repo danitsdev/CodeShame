@@ -3,6 +3,7 @@ import { JetBrains_Mono } from "next/font/google";
 import { twMerge } from "tailwind-merge";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
 import { TRPCProvider } from "@/trpc/client";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -22,14 +23,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={twMerge(jetbrainsMono.variable, "antialiased font-mono")}
-      >
+      <body className={twMerge(jetbrainsMono.variable, "antialiased font-mono")}>
         <TRPCProvider>
           <div className="flex min-h-screen flex-col bg-bg-page">
             <Navbar />
-            {/* Page Content */}
-            <div className="flex flex-1 flex-col">{children}</div>
+            <main className="flex flex-1 flex-col">{children}</main>
+            <Footer />
           </div>
         </TRPCProvider>
       </body>
