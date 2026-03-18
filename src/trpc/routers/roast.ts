@@ -215,11 +215,17 @@ Do NOT wrap the JSON in markdown blocks (like \`\`\`json) and do not include any
           .replace(/\n?```$/i, "")
           .trim();
         parsed = JSON.parse(cleanJson);
-      } catch (_err) {
-        console.error("Failed to parse AI JSON response:", text);
+        console.log("AI Response Parsed:", {
+          isValid: parsed.isValidCode,
+          title: parsed.title,
+          score: parsed.score,
+        });
+      } catch (err) {
+        console.error("Failed to parse AI JSON response. Raw text:", text);
+        console.error("Parse error:", err);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to generate code shame. Try again!",
+          message: "Failed to generate code shame. The AI sent a garbage response!",
         });
       }
 
@@ -232,6 +238,10 @@ Do NOT wrap the JSON in markdown blocks (like \`\`\`json) and do not include any
 
       const slug = generateSlug(parsed.title || "shameful-code");
 
+      // Robust score parsing
+      const rawScore = Number.parseFloat(String(parsed.score || 0));
+      const finalScore = Number.isNaN(rawScore) ? "0.0" : rawScore.toFixed(1);
+
       const [newRoast] = await ctx.db
         .insert(roasts)
         .values({
@@ -240,22 +250,24 @@ Do NOT wrap the JSON in markdown blocks (like \`\`\`json) and do not include any
           code: input.code,
           codeHash: hash,
           fixedCode: parsed.fixedCode || "",
-          language: parsed.detectedLanguage || input.language,
-          score: parsed.score?.toFixed(1) || "0.0",
+          language: (parsed.detectedLanguage || input.language || "text").toLowerCase(),
+          score: finalScore,
           summary: parsed.summary || "This code is beyond words.",
           isPublic: input.shameMode,
         })
         .returning();
 
-      if (parsed.issues && parsed.issues.length > 0) {
-        await ctx.db.insert(roastIssues).values(
-          parsed.issues.map((issue) => ({
+      if (parsed.issues && Array.isArray(parsed.issues) && parsed.issues.length > 0) {
+        const issuesToInsert = parsed.issues
+          .slice(0, 5) // Safety cap
+          .map((issue) => ({
             roastId: newRoast.id,
-            title: issue.title,
-            description: issue.description,
-            severity: issue.severity,
-          })),
-        );
+            title: String(issue.title || "Issue"),
+            description: String(issue.description || "No description provided."),
+            severity: String(issue.severity || "info").toLowerCase(),
+          }));
+
+        await ctx.db.insert(roastIssues).values(issuesToInsert);
       }
 
       return newRoast.slug;
