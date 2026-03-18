@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { createGroq } from "@ai-sdk/groq";
 import { TRPCError } from "@trpc/server";
 import { generateText } from "ai";
-import { asc, avg, count, eq, sql } from "drizzle-orm";
+import { and, asc, avg, count, eq, lt, sql } from "drizzle-orm";
 import type { BundledLanguage } from "shiki";
 import { z } from "zod";
 import { rateLimits, roastIssues, roasts } from "@/db/schema";
@@ -78,33 +78,28 @@ export const roastRouter = router({
       }
     }),
 
-  getBySlug: baseProcedure
-    .input(z.object({ slug: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const [roast] = await ctx.db
-        .select()
-        .from(roasts)
-        .where((fields) => eq(fields.slug, input.slug));
+  getBySlug: baseProcedure.input(z.object({ slug: z.string() })).query(async ({ ctx, input }) => {
+    const [roast] = await ctx.db
+      .select()
+      .from(roasts)
+      .where((fields) => eq(fields.slug, input.slug));
 
-      if (!roast) {
-        throw new Error("Roast not found");
-      }
+    if (!roast) {
+      throw new Error("Roast not found");
+    }
 
-      const issues = await ctx.db
-        .select()
-        .from(roastIssues)
-        .where((fields) => eq(fields.roastId, roast.id));
+    const issues = await ctx.db
+      .select()
+      .from(roastIssues)
+      .where((fields) => eq(fields.roastId, roast.id));
 
-      return { roast, issues };
-    }),
+    return { roast, issues };
+  }),
 
   create: baseProcedure
     .input(
       z.object({
-        code: z
-          .string()
-          .min(1)
-          .max(2000, "Code is too long. Please limit to 2,000 characters."),
+        code: z.string().min(1).max(5000, "Code is too long. Please limit to 5,000 characters."),
         language: z.string(),
         shameMode: z.boolean().default(true),
       }),
@@ -116,36 +111,35 @@ export const roastRouter = router({
         const now = new Date();
 
         // Clean up old records for this IP
-        await ctx.db
-          .delete(rateLimits)
-          .where(
-            sql`${rateLimits.ip} = ${ip} AND ${rateLimits.resetAt} < ${now}`,
-          );
+        try {
+          await ctx.db.delete(rateLimits).where(and(eq(rateLimits.ip, ip), lt(rateLimits.resetAt, now)));
 
-        // Get current rate limit
-        const [limitRecord] = await ctx.db
-          .select()
-          .from(rateLimits)
-          .where(eq(rateLimits.ip, ip));
+          // Get current rate limit
+          const [limitRecord] = await ctx.db.select().from(rateLimits).where(eq(rateLimits.ip, ip));
 
-        if (limitRecord) {
-          if (limitRecord.requests >= 20) {
-            throw new TRPCError({
-              code: "TOO_MANY_REQUESTS",
-              message:
-                "You have reached the limit of 20 roasts per hour. Please try again later.",
+          if (limitRecord) {
+            if (limitRecord.requests >= 20) {
+              throw new TRPCError({
+                code: "TOO_MANY_REQUESTS",
+                message: "You have reached the limit of 20 roasts per hour. Please try again later.",
+              });
+            }
+            await ctx.db
+              .update(rateLimits)
+              .set({ requests: limitRecord.requests + 1 })
+              .where(eq(rateLimits.ip, ip));
+          } else {
+            await ctx.db.insert(rateLimits).values({
+              ip,
+              requests: 1,
+              resetAt: new Date(now.getTime() + 60 * 60 * 1000), // Reset in 1 hour
             });
           }
-          await ctx.db
-            .update(rateLimits)
-            .set({ requests: limitRecord.requests + 1 })
-            .where(eq(rateLimits.ip, ip));
-        } else {
-          await ctx.db.insert(rateLimits).values({
-            ip,
-            requests: 1,
-            resetAt: new Date(now.getTime() + 60 * 60 * 1000), // Reset in 1 hour
-          });
+        } catch (error) {
+          if (error instanceof TRPCError) throw error;
+          console.error("Rate limiting error:", error);
+          // Fallback: allow request if rate limiting DB fails (to avoid blocking users)
+          // But in a real app you might want to block or log this specifically.
         }
       }
 
