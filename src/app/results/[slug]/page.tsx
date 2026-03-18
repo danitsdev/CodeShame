@@ -104,11 +104,7 @@ export default async function RoastResults({
                 </span>
               </div>
 
-              <ShareRoastModal
-                score={roast.score}
-                verdict={severityBadge}
-                summary={roast.summary}
-              />
+              <ShareRoastModal slug={slug} />
             </div>
           </div>
         </section>
