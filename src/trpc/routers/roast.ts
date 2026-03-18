@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { revalidatePath } from "next/cache";
 import { createGroq } from "@ai-sdk/groq";
 import { TRPCError } from "@trpc/server";
 import { generateText } from "ai";
@@ -59,7 +60,7 @@ export const roastRouter = router({
           .select()
           .from(roasts)
           .where(eq(roasts.isPublic, true))
-          .orderBy(asc(roasts.score))
+          .orderBy(asc(roasts.score), asc(roasts.createdAt))
           .limit(limit);
 
         return top.map((r, i) => ({
@@ -144,18 +145,19 @@ export const roastRouter = router({
       }
 
       // 2. Hash checking
-      const hash = crypto
-        .createHash("sha256")
-        .update(`${input.language}:${input.shameMode}:${input.code}`)
-        .digest("hex");
+      // We include shameMode in the hash so that Public and Private versions of the same code
+      // are treated as separate roasts as requested.
+      const modeStr = input.shameMode ? "public" : "private";
+      const hash = crypto.createHash("sha256").update(`${input.language}:${modeStr}:${input.code}`).digest("hex");
 
       const existing = await ctx.db
-        .select({ slug: roasts.slug })
+        .select({ slug: roasts.slug, isPublic: roasts.isPublic })
         .from(roasts)
         .where(eq(roasts.codeHash, hash))
         .limit(1);
 
       if (existing.length > 0) {
+        console.log("Found existing roast for hash:", hash, "slug:", existing[0].slug);
         return existing[0].slug;
       }
 
@@ -268,6 +270,11 @@ Do NOT wrap the JSON in markdown blocks (like \`\`\`json) and do not include any
           }));
 
         await ctx.db.insert(roastIssues).values(issuesToInsert);
+      }
+
+      if (input.shameMode) {
+        revalidatePath("/");
+        revalidatePath("/leaderboard");
       }
 
       return newRoast.slug;
