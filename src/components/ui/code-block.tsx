@@ -9,14 +9,14 @@ export const codeBlockVariants = tv({
       "shadow-2xl shadow-black/40",
     ],
     header:
-      "flex h-10 shrink-0 items-center justify-between border-b border-border-primary px-4 relative bg-bg-surface",
+      "flex h-10 shrink-0 items-center justify-between border-b border-border-primary px-4 relative bg-bg-surface z-20",
     controls: "flex items-center gap-2 w-20 z-10",
     controlRed: "size-3 rounded-full bg-accent-red opacity-80",
     controlAmber: "size-3 rounded-full bg-accent-amber opacity-80",
     controlGreen: "size-3 rounded-full bg-accent-green opacity-80",
     fileNameContainer:
-      "absolute inset-0 flex items-center justify-center pointer-events-none",
-    fileName: "font-mono text-xs text-text-tertiary opacity-80",
+      "flex items-center justify-end flex-1 pointer-events-none pr-2",
+    fileName: "font-mono text-[11px] sm:text-xs text-text-tertiary/70",
     contentContainer: "flex-1 bg-bg-input overflow-hidden",
     content:
       "p-4 overflow-x-auto text-[13px] font-mono leading-[24px] [tab-size:2]",

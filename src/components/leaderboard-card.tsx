@@ -35,9 +35,9 @@ export function LeaderboardCard({ entry }: { entry: LeaderboardEntry }) {
       href={`/results/${entry.slug}`}
       className="group flex items-center justify-between border-b border-border-primary/20 py-4 px-4 bg-transparent hover:bg-black/20 transition-colors duration-200"
     >
-      <div className="flex items-center gap-6 overflow-hidden">
+      <div className="flex items-center gap-3 sm:gap-6 overflow-hidden">
         {/* Rank */}
-        <span className="font-mono text-sm text-text-tertiary w-8 opacity-50 group-hover:opacity-100 transition-opacity">
+        <span className="font-mono text-sm text-text-tertiary w-6 sm:w-8 opacity-50 group-hover:opacity-100 transition-opacity">
           #{formattedRank}
         </span>
 
@@ -49,15 +49,17 @@ export function LeaderboardCard({ entry }: { entry: LeaderboardEntry }) {
         </div>
       </div>
 
-      <div className="flex items-center gap-6 shrink-0 ml-4">
+      <div className="flex items-center gap-2 sm:gap-6 shrink-0 ml-2 sm:ml-4">
         {/* Lines */}
         <span className="font-mono text-xs text-text-tertiary hidden sm:inline-block w-16 text-right">
           {entry.lines} lines
         </span>
 
         {/* Score */}
-        <div className="flex items-center gap-2 w-24 justify-end">
-          <span className="font-mono text-xs text-text-tertiary">score:</span>
+        <div className="flex items-center gap-1 sm:gap-2 w-16 sm:w-24 justify-end">
+          <span className="font-mono text-xs text-text-tertiary hidden sm:inline">
+            score:
+          </span>
           <span className={`font-mono text-sm font-bold ${scoreColor}`}>
             {formattedScore}
           </span>

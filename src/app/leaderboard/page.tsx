@@ -36,16 +36,16 @@ export default async function Leaderboard() {
 
   return (
     <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center py-10 px-20 bg-bg-page text-text-primary">
-        <div className="flex flex-col w-full max-w-[960px] gap-10 z-10 relative">
+      <main className="flex min-h-screen flex-col items-center pt-12 pb-8 px-4 sm:pt-28 sm:pb-12 sm:px-10 bg-bg-page text-text-primary">
+        <div className="flex flex-col w-full max-w-[960px] gap-8 sm:gap-10 z-10 relative">
           {/* Hero Section */}
-          <section className="flex flex-col gap-4">
-            <header className="flex flex-col gap-3">
-              <h1 className="flex items-center gap-3 font-mono text-4xl font-bold tracking-tight">
+          <section className="flex flex-col gap-4 items-center text-center sm:items-start sm:text-left">
+            <header className="flex flex-col gap-2 sm:gap-3 items-center sm:items-start">
+              <h1 className="flex items-center gap-2 sm:gap-3 font-mono text-3xl sm:text-5xl font-bold tracking-tight">
                 <span className="text-accent-green">&gt;</span>
                 <span className="text-text-primary">shame_leaderboard</span>
               </h1>
-              <p className="text-text-secondary font-mono text-sm opacity-80">
+              <p className="text-text-secondary font-mono text-xs sm:text-sm opacity-80 whitespace-nowrap">
                 {"// the most shamed code on the internet"}
               </p>
             </header>
@@ -58,9 +58,12 @@ export default async function Leaderboard() {
           </Suspense>
 
           {/* Home button */}
-          <div className="flex justify-center pt-4">
-            <Link href="/">
-              <Button variant="secondary" className="font-mono text-xs">
+          <div className="flex justify-center pt-4 w-full">
+            <Link href="/" className="w-full sm:w-auto">
+              <Button
+                variant="secondary"
+                className="font-mono text-xs w-full sm:w-auto h-12 sm:h-10 px-8"
+              >
                 &lt;&lt; back_home
               </Button>
             </Link>

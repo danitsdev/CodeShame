@@ -91,7 +91,7 @@ export function LanguageSelector({
             "transition-colors duration-150",
             "hover:text-accent-green",
             "focus-visible:outline-none focus-visible:text-accent-green",
-            "max-w-[140px] justify-between",
+            "max-w-[120px] sm:max-w-[140px] justify-between",
             isDetecting && isAuto
               ? "text-text-tertiary"
               : "text-text-secondary",
@@ -126,7 +126,7 @@ export function LanguageSelector({
           <Popover.Positioner side="bottom" align="center" sideOffset={4}>
             <Popover.Popup
               className={[
-                "z-50 w-52 overflow-hidden",
+                "z-[100] w-52 overflow-hidden",
                 "border border-border-primary bg-bg-elevated",
                 "shadow-lg",
               ].join(" ")}

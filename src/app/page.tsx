@@ -38,7 +38,7 @@ export default async function Home() {
 
   return (
     <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center pt-20 pb-15 px-10 gap-8 bg-bg-page text-text-primary">
+      <main className="flex min-h-screen flex-col items-center pt-20 pb-16 px-4 sm:px-10 gap-8 bg-bg-page text-text-primary">
         {/* Editor Section */}
         <HomeEditor />
 
@@ -64,7 +64,7 @@ export default async function Home() {
               </Link>
             </div>
 
-            <p className="text-text-tertiary font-mono text-sm -mt-2">
+            <p className="text-text-tertiary font-mono text-xs sm:text-sm -mt-2">
               {"// the worst code on the internet, ranked by shame"}
             </p>
           </header>

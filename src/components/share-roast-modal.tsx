@@ -27,10 +27,10 @@ export function ShareRoastModal({ slug }: { slug: string }) {
     <>
       <Button
         variant="secondary"
-        className="gap-2 px-4 h-9"
+        className="gap-2 px-4 h-12 sm:h-9 w-full sm:w-auto"
         onClick={() => setOpen(true)}
       >
-        <span className="font-mono text-xs">$ share_score</span>
+        <span className="font-mono text-sm sm:text-xs">$ share_score</span>
       </Button>
 
       {open && (

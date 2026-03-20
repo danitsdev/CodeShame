@@ -71,14 +71,18 @@ export default async function RoastResults({
     LANGUAGES[roast.language as keyof typeof LANGUAGES]?.ext || "txt";
 
   return (
-    <main className="flex min-h-screen flex-col items-center py-10 px-20 bg-bg-page">
-      <div className="flex flex-col w-full max-w-[1280px] gap-10">
+    <main className="flex min-h-screen flex-col items-center pt-12 pb-8 px-4 sm:pt-28 sm:pb-12 sm:px-10 md:px-20 bg-bg-page">
+      <div className="flex flex-col w-full max-w-[1280px] gap-8 sm:gap-10 z-10 relative">
         {/* Score Hero */}
-        <section className="flex items-center gap-12 w-full">
-          <ScoreRing score={Number.parseFloat(roast.score)} size={180} />
+        <section className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-12 w-full">
+          <ScoreRing
+            score={Number.parseFloat(roast.score)}
+            size={160}
+            className="scale-75 -my-4 sm:my-0 sm:scale-100 origin-center sm:origin-left"
+          />
 
-          <div className="flex flex-col gap-4 flex-1">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-4 flex-1 text-center sm:text-left w-full">
+            <div className="flex items-center justify-center sm:justify-start gap-2">
               <span className={`w-2 h-2 rounded-full ${severityColor}`} />
               <span
                 className={`${severityText} font-mono text-[13px] font-medium`}
@@ -87,12 +91,12 @@ export default async function RoastResults({
               </span>
             </div>
 
-            <h1 className="font-mono text-xl text-text-primary leading-relaxed">
+            <h1 className="font-mono text-xl sm:text-2xl text-text-primary leading-relaxed">
               "{roast.summary}"
             </h1>
 
-            <div className="flex items-center justify-between mt-2">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between mt-2 gap-6 sm:gap-0 w-full">
+              <div className="flex items-center justify-center sm:justify-start gap-4">
                 <span className="text-text-tertiary font-mono text-xs">
                   lang:{" "}
                   {LANGUAGES[roast.language as keyof typeof LANGUAGES]?.name ||
@@ -104,7 +108,9 @@ export default async function RoastResults({
                 </span>
               </div>
 
-              <ShareRoastModal slug={slug} />
+              <div className="w-full sm:w-auto">
+                <ShareRoastModal slug={slug} />
+              </div>
             </div>
           </div>
         </section>

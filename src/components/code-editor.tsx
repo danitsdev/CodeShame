@@ -153,7 +153,7 @@ function CodeEditor({
   } = codeBlockVariants();
 
   return (
-    <div className={twMerge(root(), "h-90", className)}>
+    <div className={twMerge(root(), "h-[300px] sm:h-[400px]", className)}>
       {/* Window Header */}
       <div className={header()}>
         <div className={controls()}>
@@ -168,7 +168,7 @@ function CodeEditor({
         </div>
 
         {/* Language selector */}
-        <div className="relative flex items-center bg-bg-input z-10">
+        <div className="relative flex items-center bg-bg-input z-50">
           <LanguageSelector
             id="lang-selector"
             detectedLang={detected}
@@ -234,7 +234,7 @@ function CodeEditor({
           />
 
           {/* Character count */}
-          <div className="absolute bottom-2 right-2 pointer-events-none z-10">
+          <div className="absolute bottom-2 right-2 pointer-events-none z-0">
             <span
               className={twMerge(
                 "font-mono text-[10px] tabular-nums bg-bg-input/80 px-1.5 py-0.5 rounded backdrop-blur-sm",

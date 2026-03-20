@@ -56,10 +56,12 @@ export function HomeEditor() {
     <section className="flex flex-col items-center w-full max-w-[780px] gap-8">
       {/* Hero Title */}
       <header className="flex flex-col items-center gap-3 text-center">
-        <h1 className="flex items-center gap-3 font-mono text-4xl font-bold">
-          <span className="text-accent-green">$</span>
-          <span className="text-text-primary">
-            submit your code. be shamed.
+        <h1 className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 font-mono text-3xl sm:text-4xl font-bold">
+          <span className="text-accent-green hidden sm:inline-block">$</span>
+          <span className="text-text-primary text-center">
+            <span className="text-accent-green sm:hidden mr-2">$</span>submit
+            your code.
+            <br className="block sm:hidden" /> be shamed.
           </span>
         </h1>
         <p className="text-text-secondary font-mono text-sm">
@@ -81,8 +83,8 @@ export function HomeEditor() {
       </div>
 
       {/* Actions Bar */}
-      <div className="flex items-center justify-between w-full h-10">
-        <div className="flex items-center gap-4 h-full">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-5 sm:gap-0 sm:h-10 mt-2 mb-16 sm:mb-0">
+        <div className="flex flex-row flex-wrap items-center gap-2 sm:gap-4 h-full w-full sm:w-auto">
           <div className="flex items-center gap-2 h-full">
             <Switch
               id="roast-mode"
@@ -93,17 +95,17 @@ export function HomeEditor() {
               shame mode
             </span>
           </div>
-          <span className="text-text-tertiary font-mono text-xs leading-none pt-0.5">
+          <span className="inline-block text-text-tertiary font-mono text-xs leading-none pt-0.5 whitespace-nowrap">
             {shameMode
               ? "// maximum sarcasm enabled"
-              : "// honest feedback mode, private btw"}
+              : "// honest and private mode"}
           </span>
         </div>
 
         <Button
           variant="primary"
           disabled={code.trim().length === 0 || code.length > 5000 || isLoading}
-          className="h-full"
+          className="w-full sm:w-auto h-12 sm:h-full shrink-0"
           onClick={handleRoast}
         >
           {isLoading ? "$ shaming..." : "$ shame_my_code"}
